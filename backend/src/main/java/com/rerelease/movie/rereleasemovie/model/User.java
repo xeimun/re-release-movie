@@ -19,36 +19,34 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "movie")
-public class Movie {
+@Table(name = "user")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
-    private int releaseYear;
+    private String password;
 
-    private String genre;
-    private String director;
-    private String posterUrl;
+    @Column(nullable = false)
+    private String nickname;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private String phoneNumber;
+    private boolean emailVerified = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<UserMovieAlert> alerts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    private List<ReReleaseInfo> reReleases = new ArrayList<>();
-
     @Builder
-    public Movie(String title, int releaseYear, String genre, String director, String posterUrl) {
-        this.title = title;
-        this.releaseYear = releaseYear;
-        this.genre = genre;
-        this.director = director;
-        this.posterUrl = posterUrl;
+    public User(String email, String password, String nickname, String phoneNumber, boolean emailVerified) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.emailVerified = emailVerified;
     }
 }
