@@ -1,11 +1,11 @@
 package com.rerelease.movie.rereleasemovie.repository;
 
-import com.rerelease.movie.rereleasemovie.model.Movie;
+import com.rerelease.movie.rereleasemovie.model.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, Long> {
-    Optional<Movie> findByTitle(String title);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
 }
