@@ -13,15 +13,12 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
@@ -52,6 +49,15 @@ public class Users {
     public enum Role {
         ROLE_USER,
         ROLE_ADMIN
+    }
+
+    @Builder
+    public Users(String email, String password, String nickname, boolean emailVerified, Role role) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.emailVerified = emailVerified;
+        this.role = role;
     }
 }
 
