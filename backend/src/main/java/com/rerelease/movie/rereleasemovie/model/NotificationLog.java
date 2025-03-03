@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class NotificationLog {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
@@ -37,10 +38,10 @@ public class NotificationLog {
     private String notificationType;
 
     @Column(nullable = false)
-    private String sentAt;
+    private LocalDateTime sentAt;
 
     @Builder
-    public NotificationLog(User user, Movie movie, String notificationType, String sentAt) {
+    public NotificationLog(Users user, Movie movie, String notificationType, LocalDateTime sentAt) {
         this.user = user;
         this.movie = movie;
         this.notificationType = notificationType;

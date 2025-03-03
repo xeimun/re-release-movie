@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,10 +33,10 @@ public class ReReleaseInfo {
     private String theaterName;
 
     @Column(nullable = false)
-    private String releaseDate;
+    private LocalDate releaseDate;
 
     @Builder
-    public ReReleaseInfo(Movie movie, String theaterName, String releaseDate) {
+    public ReReleaseInfo(Movie movie, String theaterName, LocalDate releaseDate) {
         this.movie = movie;
         this.theaterName = theaterName;
         this.releaseDate = releaseDate;

@@ -25,7 +25,7 @@ public class UserMovieAlert {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @ToString.Exclude
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
@@ -35,7 +35,7 @@ public class UserMovieAlert {
     private boolean notificationStatus = true;
 
     @Builder
-    public UserMovieAlert(User user, Movie movie, boolean notificationStatus) {
+    public UserMovieAlert(Users user, Movie movie, boolean notificationStatus) {
         this.user = user;
         this.movie = movie;
         this.notificationStatus = notificationStatus;
