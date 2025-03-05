@@ -48,7 +48,7 @@ public class AuthController {
                                  .body("이미 가입된 이메일입니다.");
         }
 
-        // 비밀번호 암호화 후 저장
+        // 비밀번호 해싱 후 저장
         Users newUser = Users.builder()
                              .email(request.getEmail())
                              .password(passwordEncoder.encode(request.getPassword()))

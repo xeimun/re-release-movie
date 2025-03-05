@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보안 비활성화 (API 개발 시 필요)
                 .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS)) // 세션 사용 안 함
+                        SessionCreationPolicy.STATELESS)) // 세션 사용 안 함(JWT 인증 방식 사용)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**")
                         .permitAll() // 회원가입, 로그인은 인증 없이 허용
