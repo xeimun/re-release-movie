@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService; // 직접 구현한 CustomUserDetailsService가 자동 주입됨 (의존성 주입 + 다형성)
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
