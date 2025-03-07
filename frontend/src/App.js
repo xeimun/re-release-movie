@@ -9,7 +9,7 @@ const App = () => {
         <>
             <NavBar/>
             <Routes>
-                <Route path="/" element={<h1>홈페이지</h1>}/> {/* ✅ 메인 페이지 추가 */}
+                <Route path="/" element={<h1>메인 페이지</h1>}/>
                 <Route path="/signup" element={<Signup/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/me" element={<Profile/>}/>
