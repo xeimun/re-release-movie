@@ -1,7 +1,7 @@
 package com.rerelease.movie.rereleasemovie.service;
 
-import com.rerelease.movie.rereleasemovie.dto.api.MovieInfoDto;
-import com.rerelease.movie.rereleasemovie.dto.api.MovieListResponseDto;
+import com.rerelease.movie.rereleasemovie.dto.OpenAPI.kofic.MovieInfoDto;
+import com.rerelease.movie.rereleasemovie.dto.OpenAPI.kofic.MovieListResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

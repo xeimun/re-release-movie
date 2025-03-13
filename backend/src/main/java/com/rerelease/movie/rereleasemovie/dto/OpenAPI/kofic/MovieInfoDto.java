@@ -1,4 +1,4 @@
-package com.rerelease.movie.rereleasemovie.dto.api;
+package com.rerelease.movie.rereleasemovie.dto.OpenAPI.kofic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

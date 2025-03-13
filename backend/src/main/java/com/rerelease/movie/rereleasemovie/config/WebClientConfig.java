@@ -16,4 +16,12 @@ public class WebClientConfig {
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .build();
     }
+
+    @Bean
+    public WebClient tmdbWebClient() {
+        return WebClient.builder()
+                        .baseUrl("https://api.themoviedb.org/3")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .build();
+    }
 }

@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS)) // 세션 사용 안 함(JWT 인증 방식 사용)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/kofic/**")
+                        .requestMatchers("/api/auth/**", "/api/kofic/**", "/api/tmdb/**")
                         .permitAll() // 회원가입, 로그인, Open API 요청은 인증 없이 허용
                         .anyRequest()
                         .authenticated() // 그 외 모든 요청은 인증 필요
