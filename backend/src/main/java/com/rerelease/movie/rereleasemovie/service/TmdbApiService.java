@@ -1,6 +1,7 @@
 package com.rerelease.movie.rereleasemovie.service;
 
 import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
+import com.rerelease.movie.rereleasemovie.dto.api.tmdb.search.TmdbMovieSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,6 @@ public class TmdbApiService {
      *
      * @return 총 페이지 수 (`totalPages` 값), 오류 발생 시 기본값 1 반환
      */
-
     public int getTotalPages() {
         TmdbMovieListResponseDto response = getUpcomingMovies(1);  // 첫 번째 페이지 데이터를 요청하여 총 페이지 수 확인
         if (response != null) {
@@ -44,5 +44,21 @@ public class TmdbApiService {
         } else {
             return 1; // 응답이 null이면 기본값 1 반환
         }
+    }
+
+    /**
+     * TMDB API에서 특정 영화 제목으로 검색
+     *
+     * @param query 검색할 영화 제목
+     * @return TMDB 검색 결과 (TmdbMovieSearchResponseDto)
+     */
+    public TmdbMovieSearchResponseDto searchMovies(String query) {
+        String url = "/search/movie?api_key=" + tmdbApiKey + "&language=ko-KR&query=" + query;
+
+        return tmdbWebClient.get()
+                            .uri(url)
+                            .retrieve()
+                            .bodyToMono(TmdbMovieSearchResponseDto.class)
+                            .block();
     }
 }

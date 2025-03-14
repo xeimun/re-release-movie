@@ -1,6 +1,7 @@
 package com.rerelease.movie.rereleasemovie.controller;
 
 import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
+import com.rerelease.movie.rereleasemovie.dto.api.tmdb.search.TmdbMovieSearchResponseDto;
 import com.rerelease.movie.rereleasemovie.service.TmdbApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,10 @@ public class TmdbApiController {
     public ResponseEntity<Integer> getTotalPages() {
         int totalPages = tmdbApiService.getTotalPages();
         return ResponseEntity.ok(totalPages);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<TmdbMovieSearchResponseDto> searchMovies(@RequestParam String query) {
+        return ResponseEntity.ok(tmdbApiService.searchMovies(query));
     }
 }
