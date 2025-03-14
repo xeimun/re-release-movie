@@ -1,6 +1,6 @@
 package com.rerelease.movie.rereleasemovie.service;
 
-import com.rerelease.movie.rereleasemovie.dto.OpenAPI.tmdb.TmdbMovieListResponseDto;
+import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

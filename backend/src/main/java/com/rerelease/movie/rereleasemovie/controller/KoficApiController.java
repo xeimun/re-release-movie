@@ -1,6 +1,6 @@
 package com.rerelease.movie.rereleasemovie.controller;
 
-import com.rerelease.movie.rereleasemovie.dto.OpenAPI.kofic.MovieInfoDto;
+import com.rerelease.movie.rereleasemovie.dto.api.kofic.MovieInfoDto;
 import com.rerelease.movie.rereleasemovie.service.KoficApiService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

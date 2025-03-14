@@ -1,6 +1,6 @@
 package com.rerelease.movie.rereleasemovie.controller;
 
-import com.rerelease.movie.rereleasemovie.dto.OpenAPI.tmdb.TmdbMovieListResponseDto;
+import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
 import com.rerelease.movie.rereleasemovie.service.TmdbApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

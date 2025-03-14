@@ -1,4 +1,4 @@
-package com.rerelease.movie.rereleasemovie.dto.OpenAPI.tmdb;
+package com.rerelease.movie.rereleasemovie.dto.api.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
