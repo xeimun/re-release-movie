@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class KoficApiService {
 
-    private final WebClient webClient;
+    private final WebClient koficWebClient;
 
     @Value("${kofic.api.key}")
     private String koficApiKey;
@@ -21,11 +21,11 @@ public class KoficApiService {
         String url = "/movie/searchMovieList.json?key=" + koficApiKey + "&movieNm=" + movieName;
 
         // KOFIC API 요청 및 응답 처리
-        MovieListResponseDto response = webClient.get()
-                                                 .uri(url)
-                                                 .retrieve()
-                                                 .bodyToMono(MovieListResponseDto.class)
-                                                 .block();
+        MovieListResponseDto response = koficWebClient.get()
+                                                      .uri(url)
+                                                      .retrieve()
+                                                      .bodyToMono(MovieListResponseDto.class)
+                                                      .block();
 
         // API 응답이 null이거나 데이터가 없는 경우
         if (response == null || response.getMovieList()
