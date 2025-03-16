@@ -31,6 +31,13 @@ const NavBar = () => {
                     ) : (
                         <>
                             <li><Link to="/me" className="hover:text-gray-300 block md:inline">내 정보</Link></li>
+                            {/* 로그인한 사용자만 "영화 등록" 버튼 표시 */}
+                            <li>
+                                <Link to="/movie-register"
+                                      className="hover:text-gray-300 block md:inline">
+                                    🎥 영화 등록
+                                </Link>
+                            </li>
                             <li>
                                 <button
                                     onClick={logout}
