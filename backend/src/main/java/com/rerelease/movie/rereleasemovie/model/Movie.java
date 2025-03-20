@@ -37,10 +37,6 @@ public class Movie {
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<UserMovieAlert> alerts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
     private List<ReReleaseInfo> reReleases = new ArrayList<>();
 
     @Builder

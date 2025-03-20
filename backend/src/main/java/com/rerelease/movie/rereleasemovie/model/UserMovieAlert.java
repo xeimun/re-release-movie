@@ -1,5 +1,6 @@
 package com.rerelease.movie.rereleasemovie.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,11 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,17 +30,19 @@ public class UserMovieAlert {
     @ToString.Exclude
     private Users user;
 
-    @ManyToOne
-    @JoinColumn(name = "movie_id", nullable = false)
-    @ToString.Exclude
-    private Movie movie;
+    private Long movieId;
 
-    private boolean notificationStatus = true;
+    // MySQL의 TINYINT(1) 타입은 Java의 Boolean 타입과 매핑(true는 1, false는 0)
+    private boolean notificationSent = false;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @Builder
-    public UserMovieAlert(Users user, Movie movie, boolean notificationStatus) {
+    public UserMovieAlert(Users user, long movieId, boolean notificationSent) {
         this.user = user;
-        this.movie = movie;
-        this.notificationStatus = notificationStatus;
+        this.movieId = movieId;
+        this.notificationSent = notificationSent;
     }
 }
