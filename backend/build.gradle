@@ -53,6 +53,15 @@ dependencies {
 
     // WebClient 사용
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Spring Security의 핵심 기능 제공 (인증, 권한 부여, 보안 컨텍스트 관리 등)
+    implementation 'org.springframework.security:spring-security-core'
+
+    // 웹 보안 기능 제공 (필터 체인, URL 보호, CORS 처리 등)
+    implementation 'org.springframework.security:spring-security-web'
+
+    // 보안 설정 및 커스텀 설정 지원 (Configuration 클래스에서 사용)
+    implementation 'org.springframework.security:spring-security-config'
 }
 
 tasks.named('test') {
