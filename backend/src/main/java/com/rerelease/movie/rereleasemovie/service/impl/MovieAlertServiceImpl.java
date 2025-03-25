@@ -41,6 +41,10 @@ public class MovieAlertServiceImpl implements MovieAlertService {
 
         userMovieAlertRepository.save(newAlert);
 
-        return new MovieAlertResponse("영화 등록이 완료되었습니다.", request.getTitle(), request.getTmdbId());
+        return MovieAlertResponse.builder()
+                                 .message("영화 등록이 완료되었습니다.")
+                                 .movieTitle(request.getTitle())
+                                 .movieId(request.getTmdbId())
+                                 .build();
     }
 }

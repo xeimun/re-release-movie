@@ -1,10 +1,10 @@
 package com.rerelease.movie.rereleasemovie.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class MovieAlertResponse {
     private String message;
     private String movieTitle;
