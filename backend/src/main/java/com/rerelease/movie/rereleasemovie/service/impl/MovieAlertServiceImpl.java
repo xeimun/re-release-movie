@@ -9,6 +9,8 @@ import com.rerelease.movie.rereleasemovie.model.Users;
 import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
 import com.rerelease.movie.rereleasemovie.repository.UserRepository;
 import com.rerelease.movie.rereleasemovie.service.MovieAlertService;
+import com.rerelease.movie.rereleasemovie.service.NotificationQueueService;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,10 @@ public class MovieAlertServiceImpl implements MovieAlertService {
 
     private final UserMovieAlertRepository userMovieAlertRepository;
     private final UserRepository userRepository;
+    private final NotificationQueueService notificationQueueService;
 
     @Override
+    @Transactional
     public MovieAlertResponse registerMovieAlert(String userEmail, MovieAlertRequest request) {
 
         // 1. 현재 사용자를 이메일로 조회 (사용자가 없는 경우 예외 발생)
@@ -31,26 +35,30 @@ public class MovieAlertServiceImpl implements MovieAlertService {
         Optional<UserMovieAlert> existingAlert = userMovieAlertRepository.findByUserAndMovieId(currentUser,
                 request.getTmdbId());
 
-        // 3. 만약 이미 등록된 영화라면 예외 발생
+        // 3. 이미 등록된 영화일 경우 예외 발생
         if (existingAlert.isPresent()) {
             throw new MovieAlreadyRegisteredException("이미 등록된 영화입니다.");
         }
 
         // 4. 새로운 알림 객체 생성 (UserMovieAlert 엔티티)
         UserMovieAlert newAlert = UserMovieAlert.builder()
-                                                .user(currentUser)              // 알림을 등록한 사용자 설정
-                                                .movieId(request.getTmdbId())   // 등록하려는 영화의 TMDB ID 설정
-                                                .status(0)                      // 알림이 아직 전송되지 않았음을 표시
+                                                .user(currentUser)
+                                                .movieId(request.getTmdbId())
+                                                .status(0)
                                                 .build();
 
         // 5. 데이터베이스에 저장
-        userMovieAlertRepository.save(newAlert);
+        UserMovieAlert savedAlert = userMovieAlertRepository.save(newAlert);
 
-        // 6. 성공 메시지를 담은 응답 DTO 객체 생성 및 반환
+        // 6. NotificationQueue 에 추가
+        notificationQueueService.addAlertToQueue(savedAlert.getId());
+
+        // 7. 성공 메시지를 담은 응답 객체 생성 및 반환
         return MovieAlertResponse.builder()
                                  .message("영화 등록이 완료되었습니다.")
                                  .movieTitle(request.getTitle())
                                  .movieId(request.getTmdbId())
+                                 .userMovieAlertId(savedAlert.getId())
                                  .build();
     }
 }

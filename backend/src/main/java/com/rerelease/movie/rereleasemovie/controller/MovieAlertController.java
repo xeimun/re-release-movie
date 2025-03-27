@@ -31,7 +31,9 @@ public class MovieAlertController {
         }
 
         try {
+            // 영화 알림 등록 (알림 등록 및 NotificationQueue 추가가 내부에서 처리됨)
             MovieAlertResponse response = movieAlertService.registerMovieAlert(userDetails.getUsername(), request);
+
             return ResponseEntity.ok(response);
 
         } catch (UserNotFoundException e) {

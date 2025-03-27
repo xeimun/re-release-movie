@@ -9,4 +9,5 @@ public class MovieAlertResponse {
     private String message;
     private String movieTitle;
     private long movieId;
+    private long userMovieAlertId;
 }
