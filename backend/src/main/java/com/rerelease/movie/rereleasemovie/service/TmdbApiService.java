@@ -33,6 +33,22 @@ public class TmdbApiService {
     }
 
     /**
+     * TMDB Open API를 호출하여 현재 상영 중인 영화 목록을 가져옴
+     *
+     * @param page 요청할 페이지 번호 (1페이지당 20개 영화)
+     * @return TMDB API에서 반환된 현재 상영 중인 영화 목록 (`TmdbMovieListResponseDto`)
+     */
+    public TmdbMovieListResponseDto getNowPlayingMovies(int page) {  // 추가된 부분
+        String url = "/movie/now_playing?api_key=" + tmdbApiKey + "&language=ko-KR&region=KR&page=" + page;
+
+        return tmdbWebClient.get()
+                            .uri(url)
+                            .retrieve()
+                            .bodyToMono(TmdbMovieListResponseDto.class)
+                            .block();
+    }
+
+    /**
      * TMDB API에서 전체 개봉 예정 영화의 총 페이지 수를 가져옴
      *
      * @return 총 페이지 수 (`totalPages` 값), 오류 발생 시 기본값 1 반환
