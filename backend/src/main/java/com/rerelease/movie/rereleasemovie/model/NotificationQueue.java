@@ -18,41 +18,41 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "notification_log")
-public class NotificationLog {
+@Table(name = "notification_queue")
+public class NotificationQueue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_movie_alert_id", nullable = false)
     @ToString.Exclude
-    private Users user;
-
-    @Column(name = "movie_id", nullable = false)
-    private Long movieId;
+    private UserMovieAlert userMovieAlert;
 
     @Column(nullable = false)
-    private String notificationType;
+    private LocalDateTime scheduledTime;
 
     @Column(nullable = false)
     private int status;
+
+    @Column(nullable = false)
+    private int retryCount;
 
     @Column
     private String errorMessage;
 
     @Column(nullable = false)
-    private LocalDateTime sentAt;
+    private LocalDateTime createdAt;
 
     @Builder
-    public NotificationLog(Users user, Long movieId, String notificationType, int status,
-                           String errorMessage, LocalDateTime sentAt) {
-        this.user = user;
-        this.movieId = movieId;
-        this.notificationType = notificationType;
+    public NotificationQueue(UserMovieAlert userMovieAlert, LocalDateTime scheduledTime, int status,
+                             int retryCount, String errorMessage, LocalDateTime createdAt) {
+        this.userMovieAlert = userMovieAlert;
+        this.scheduledTime = scheduledTime;
         this.status = status;
+        this.retryCount = retryCount;
         this.errorMessage = errorMessage;
-        this.sentAt = sentAt;
+        this.createdAt = createdAt;
     }
 }
