@@ -40,7 +40,7 @@ public class MovieAlertServiceImpl implements MovieAlertService {
         UserMovieAlert newAlert = UserMovieAlert.builder()
                                                 .user(currentUser)              // 알림을 등록한 사용자 설정
                                                 .movieId(request.getTmdbId())   // 등록하려는 영화의 TMDB ID 설정
-                                                .notificationSent(false)        // 알림이 아직 전송되지 않았음을 표시
+                                                .status(0)                      // 알림이 아직 전송되지 않았음을 표시
                                                 .build();
 
         // 5. 데이터베이스에 저장

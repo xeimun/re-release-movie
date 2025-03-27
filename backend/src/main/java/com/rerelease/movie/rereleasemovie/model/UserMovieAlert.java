@@ -32,17 +32,16 @@ public class UserMovieAlert {
 
     private Long movieId;
 
-    // MySQL의 TINYINT(1) 타입은 Java의 Boolean 타입과 매핑(true는 1, false는 0)
-    private boolean notificationSent = false;
+    private int status = 0;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public UserMovieAlert(Users user, long movieId, boolean notificationSent) {
+    public UserMovieAlert(Users user, long movieId, int status) {
         this.user = user;
         this.movieId = movieId;
-        this.notificationSent = notificationSent;
+        this.status = status;
     }
 }
