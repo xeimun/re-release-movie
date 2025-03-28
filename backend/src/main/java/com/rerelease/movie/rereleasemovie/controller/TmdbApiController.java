@@ -25,7 +25,7 @@ public class TmdbApiController {
 
     @GetMapping("/upcoming/total-pages")
     public ResponseEntity<Integer> getTotalPages() {
-        int totalPages = tmdbApiService.getTotalPages();
+        int totalPages = tmdbApiService.getTotalPagesForUpcoming();
         return ResponseEntity.ok(totalPages);
     }
 

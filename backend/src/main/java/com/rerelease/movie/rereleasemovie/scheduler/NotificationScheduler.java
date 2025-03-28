@@ -24,8 +24,8 @@ public class NotificationScheduler {
     public void checkAndSendNotifications() {
         Set<Long> availableMovieIds = new HashSet<>();
 
-        // 모든 페이지의 개봉 예정 영화 목록을 조회하여 추가
-        for (int page = 1; page <= tmdbApiService.getTotalPages(); page++) {
+        // 모든 페이지의 개봉 예정 영화 목록 조회
+        for (int page = 1; page <= tmdbApiService.getTotalPagesForUpcoming(); page++) {
             TmdbMovieListResponseDto upcomingMovies = tmdbApiService.getUpcomingMovies(page);
             if (upcomingMovies != null) {
                 upcomingMovies.getResults()
@@ -33,11 +33,13 @@ public class NotificationScheduler {
             }
         }
 
-        // 현재 개봉 중인 영화 목록을 조회하여 추가 (1페이지만 조회)
-        TmdbMovieListResponseDto nowPlayingMovies = tmdbApiService.getNowPlayingMovies(1);
-        if (nowPlayingMovies != null) {
-            nowPlayingMovies.getResults()
-                            .forEach(movie -> availableMovieIds.add(movie.getId()));
+        // 모든 페이지의 현재 개봉 중인 영화 목록 조회
+        for (int page = 1; page <= tmdbApiService.getTotalPagesForNowPlaying(); page++) {
+            TmdbMovieListResponseDto nowPlayingMovies = tmdbApiService.getNowPlayingMovies(page);
+            if (nowPlayingMovies != null) {
+                nowPlayingMovies.getResults()
+                                .forEach(movie -> availableMovieIds.add(movie.getId()));
+            }
         }
 
         // 알림 등록된 영화들 중 아직 전송되지 않은 영화 조회
@@ -51,3 +53,4 @@ public class NotificationScheduler {
         }
     }
 }
+

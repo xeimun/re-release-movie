@@ -53,13 +53,25 @@ public class TmdbApiService {
      *
      * @return 총 페이지 수 (`totalPages` 값), 오류 발생 시 기본값 1 반환
      */
-    public int getTotalPages() {
+    public int getTotalPagesForUpcoming() {
         TmdbMovieListResponseDto response = getUpcomingMovies(1);  // 첫 번째 페이지 데이터를 요청하여 총 페이지 수 확인
         if (response != null) {
             return response.getTotalPages();
-        } else {
-            return 1; // 응답이 null이면 기본값 1 반환
         }
+        return 1;  // 응답이 null이면 기본값 1 반환
+    }
+
+    /**
+     * TMDB API에서 현재 개봉 영화의 총 페이지 수를 가져옴
+     *
+     * @return 총 페이지 수 (`totalPages` 값), 오류 발생 시 기본값 1 반환
+     */
+    public int getTotalPagesForNowPlaying() {
+        TmdbMovieListResponseDto response = getNowPlayingMovies(1);
+        if (response != null) {
+            return response.getTotalPages();
+        }
+        return 1;
     }
 
     /**
