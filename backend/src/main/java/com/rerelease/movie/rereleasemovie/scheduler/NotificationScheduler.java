@@ -1,7 +1,8 @@
 package com.rerelease.movie.rereleasemovie.scheduler;
 
 import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
-import com.rerelease.movie.rereleasemovie.model.UserMovieAlert;
+import com.rerelease.movie.rereleasemovie.model.NotificationQueue;
+import com.rerelease.movie.rereleasemovie.repository.NotificationQueueRepository;
 import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
 import com.rerelease.movie.rereleasemovie.service.NotificationQueueService;
 import com.rerelease.movie.rereleasemovie.service.TmdbApiService;
@@ -19,12 +20,13 @@ public class NotificationScheduler {
     private final TmdbApiService tmdbApiService;
     private final UserMovieAlertRepository userMovieAlertRepository;
     private final NotificationQueueService notificationQueueService;
+    private final NotificationQueueRepository notificationQueueRepository;
 
     @Scheduled(cron = "0 0 4 * * ?")
-    public void checkAndSendNotifications() {
+    public void processNotifications() {
         Set<Long> availableMovieIds = new HashSet<>();
 
-        // 모든 페이지의 개봉 예정 영화 목록 조회
+        // 모든 개봉 예정 영화 조회
         for (int page = 1; page <= tmdbApiService.getTotalPagesForUpcoming(); page++) {
             TmdbMovieListResponseDto upcomingMovies = tmdbApiService.getUpcomingMovies(page);
             if (upcomingMovies != null) {
@@ -33,7 +35,7 @@ public class NotificationScheduler {
             }
         }
 
-        // 모든 페이지의 현재 개봉 중인 영화 목록 조회
+        // 모든 현재 개봉 중인 영화 조회
         for (int page = 1; page <= tmdbApiService.getTotalPagesForNowPlaying(); page++) {
             TmdbMovieListResponseDto nowPlayingMovies = tmdbApiService.getNowPlayingMovies(page);
             if (nowPlayingMovies != null) {
@@ -42,15 +44,15 @@ public class NotificationScheduler {
             }
         }
 
-        // 알림 등록된 영화들 중 아직 전송되지 않은 영화 조회
-        List<UserMovieAlert> alertsToSend = userMovieAlertRepository.findByStatus(0);
+        // 알림 큐에서 전송 대기 상태(0) 및 재시도 횟수 3 미만인 데이터 조회
+        List<NotificationQueue> queues = notificationQueueRepository.findByStatusAndRetryCountLessThan(0, 3);
 
-        // 알림 발송 작업 수행
-        for (UserMovieAlert alert : alertsToSend) {
-            if (availableMovieIds.contains(alert.getMovieId())) {
-                notificationQueueService.sendNotification(alert);
+        // 알림 전송 실행
+        for (NotificationQueue queue : queues) {
+            if (availableMovieIds.contains(queue.getUserMovieAlert()
+                                                .getMovieId())) {
+                notificationQueueService.sendNotification(queue);
             }
         }
     }
 }
-
