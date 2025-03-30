@@ -56,14 +56,9 @@ public class NotificationQueue {
         this.createdAt = createdAt;
     }
 
-    public NotificationQueue changeStatus(int newStatus, String errorMessage, int retryCount) {
-        return NotificationQueue.builder()
-                                .userMovieAlert(this.userMovieAlert)
-                                .scheduledTime(this.scheduledTime)
-                                .status(newStatus)
-                                .retryCount(retryCount)
-                                .errorMessage(errorMessage)
-                                .createdAt(this.createdAt)
-                                .build();
+    public void updateStatus(int newStatus, String errorMessage, int retryCount) {
+        this.status = newStatus;
+        this.errorMessage = errorMessage;
+        this.retryCount = retryCount;
     }
 }

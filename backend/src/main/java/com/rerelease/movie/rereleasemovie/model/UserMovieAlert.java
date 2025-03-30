@@ -45,7 +45,7 @@ public class UserMovieAlert {
         this.status = status;
     }
 
-    public UserMovieAlert changeStatus(int newStatus) {
-        return new UserMovieAlert(this.user, this.movieId, newStatus);
+    public void updateStatus(int newStatus) {
+        this.status = newStatus;
     }
 }

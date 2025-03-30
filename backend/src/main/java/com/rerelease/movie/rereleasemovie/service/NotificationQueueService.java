@@ -24,19 +24,23 @@ public class NotificationQueueService {
 
     /**
      * 알림을 큐에 추가하는 메서드
-     * - 사용자가 알림을 등록하면 NotificationQueue 테이블에 저장된다.
+     * - 사용자가 영화에 대해 알림을 등록하면 NotificationQueue 테이블에 추가됨
+     *
+     * @param userMovieAlertId 사용자 알림 등록 ID
      */
     @Transactional
     public void addAlertToQueue(Long userMovieAlertId) {
+        // 등록된 알림 ID로 UserMovieAlert 조회 (없으면 예외)
         UserMovieAlert userMovieAlert = userMovieAlertRepository.findById(userMovieAlertId)
                                                                 .orElseThrow(() -> new IllegalArgumentException(
                                                                         "해당 알림이 존재하지 않습니다."));
 
+        // 전송 대기 상태(0)로 알림 큐에 추가
         NotificationQueue notificationQueue = NotificationQueue.builder()
                                                                .userMovieAlert(userMovieAlert)
-                                                               .scheduledTime(LocalDateTime.now())
+                                                               .scheduledTime(LocalDateTime.now()) // 즉시 전송 예정
                                                                .retryCount(0)
-                                                               .status(0)  // 전송 대기 상태
+                                                               .status(0)  // 0: 대기 상태
                                                                .createdAt(LocalDateTime.now())
                                                                .build();
 
@@ -44,55 +48,56 @@ public class NotificationQueueService {
     }
 
     /**
-     * 이메일 알림을 전송하는 메서드 (전송 성공 또는 실패 시 상태 변경)
+     * 이메일 알림을 전송하는 메서드
+     * - 전송 성공 시 상태를 "1(성공)"으로 변경하고 로그를 기록
+     * - 실패 시 재시도 횟수를 증가시키고, 상태를 "0(재대기)" 또는 "2(실패)"로 설정
+     *
+     * @param queue 알림 대기열 정보 (NotificationQueue 엔티티)
      */
     @Transactional
     public void sendNotification(NotificationQueue queue) {
         try {
             UserMovieAlert alert = queue.getUserMovieAlert();
 
-            // 이메일 메시지 생성
+            // 이메일 메시지 구성
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(alert.getUser()
                                .getEmail());
             message.setSubject("[재개봉 알림] - 영화 알림");
             message.setText("등록하신 영화가 재개봉되었습니다. 영화 ID: " + alert.getMovieId());
 
-            // 이메일 전송
+            // 이메일 발송
             mailSender.send(message);
 
-            // 전송 성공 시 상태 변경 (1: 전송 성공)
-            UserMovieAlert updatedAlert = alert.changeStatus(1);
-            NotificationQueue updatedQueue = queue.changeStatus(1, null, 0);
+            // [성공 처리]
+            alert.updateStatus(1); // UserMovieAlert 상태: 전송 성공
+            queue.updateStatus(1, null, 0); // NotificationQueue 상태: 전송 성공 (에러 메시지 없음, 재시도 횟수 0)
 
-            userMovieAlertRepository.save(updatedAlert);
-            notificationQueueRepository.save(updatedQueue);
-
-            // 로그 저장 (전송 성공)
+            // 알림 로그 저장 (성공)
             notificationLogRepository.save(NotificationLog.builder()
                                                           .user(alert.getUser())
                                                           .movieId(alert.getMovieId())
                                                           .notificationType("EMAIL")
-                                                          .status(1)
+                                                          .status(1)  // 성공
                                                           .sentAt(LocalDateTime.now())
                                                           .build());
 
         } catch (Exception e) {
-            // 전송 실패 시 재시도 횟수 증가 및 상태 업데이트
+            // [실패 처리]
             int updatedRetryCount = queue.getRetryCount() + 1;
-            int updatedStatus = (updatedRetryCount >= 3) ? 2 : 0;  // 3회 실패 시 상태 2 (완전 실패)
+            int updatedStatus = (updatedRetryCount >= 3) ? 2 : 0;  // 3회 이상 실패 시 상태 2(완전 실패), 그 외는 다시 대기
 
-            NotificationQueue failedQueue = queue.changeStatus(updatedStatus, e.getMessage(), updatedRetryCount);
-            notificationQueueRepository.save(failedQueue);
+            // 상태, 에러 메시지, 재시도 횟수 업데이트
+            queue.updateStatus(updatedStatus, e.getMessage(), updatedRetryCount);
 
-            // 로그 저장 (전송 실패)
+            // 알림 로그 저장 (실패)
             notificationLogRepository.save(NotificationLog.builder()
                                                           .user(queue.getUserMovieAlert()
                                                                      .getUser())
                                                           .movieId(queue.getUserMovieAlert()
                                                                         .getMovieId())
                                                           .notificationType("EMAIL")
-                                                          .status(2)
+                                                          .status(2)  // 실패
                                                           .errorMessage(e.getMessage())
                                                           .sentAt(LocalDateTime.now())
                                                           .build());
