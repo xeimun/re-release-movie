@@ -70,7 +70,6 @@ public class NotificationQueueService {
             mailSender.send(message);
 
             // [성공 처리]
-            alert.updateStatus(1); // UserMovieAlert 상태: 전송 성공
             queue.updateStatus(1, null, 0); // NotificationQueue 상태: 전송 성공 (에러 메시지 없음, 재시도 횟수 0)
 
             // 알림 로그 저장 (성공)

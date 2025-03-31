@@ -32,8 +32,6 @@ public class UserMovieAlert {
 
     private Long movieId;
 
-    private int status = 0;
-
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -42,10 +40,5 @@ public class UserMovieAlert {
     public UserMovieAlert(Users user, long movieId, int status) {
         this.user = user;
         this.movieId = movieId;
-        this.status = status;
-    }
-
-    public void updateStatus(int newStatus) {
-        this.status = newStatus;
     }
 }

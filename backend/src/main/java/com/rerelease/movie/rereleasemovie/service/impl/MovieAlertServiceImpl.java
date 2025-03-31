@@ -44,7 +44,6 @@ public class MovieAlertServiceImpl implements MovieAlertService {
         UserMovieAlert newAlert = UserMovieAlert.builder()
                                                 .user(currentUser)
                                                 .movieId(request.getTmdbId())
-                                                .status(0)
                                                 .build();
 
         // 5. 데이터베이스에 저장

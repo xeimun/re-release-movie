@@ -42,20 +42,19 @@ public class NotificationQueueServiceTest {
     public void testSendNotification() {
         // 1. 테스트용 사용자 조회 또는 생성 (중복 생성 방지)
         Users user = userRepository.findByEmail("hinote444@naver.com")
-                                   .orElseGet(() -> {
-                                       return userRepository.save(Users.builder()
-                                                                       .email("hinote444@naver.com")
-                                                                       .nickname("지브리좋아")
-                                                                       .password("12345678")
-                                                                       .build());
-                                   });
+                                   .orElseGet(() -> userRepository.save(
+                                           Users.builder()
+                                                .email("hinote444@naver.com")
+                                                .nickname("지브리좋아")
+                                                .password("12345678")
+                                                .build()
+                                   ));
 
         // 2. 알림 대상 영화 등록 (UserMovieAlert 테이블에 삽입)
         UserMovieAlert alert = userMovieAlertRepository.save(
                 UserMovieAlert.builder()
                               .user(user)
-                              .movieId(12345L)  // TMDB 영화 ID
-                              .status(0)        // 초기 상태: 전송되지 않음
+                              .movieId(12345L)  // TMDB 영화 ID 임의 번호 지정
                               .build()
         );
 
