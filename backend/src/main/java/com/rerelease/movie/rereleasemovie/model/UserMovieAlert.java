@@ -37,7 +37,7 @@ public class UserMovieAlert {
     private LocalDateTime createdAt;
 
     @Builder
-    public UserMovieAlert(Users user, long movieId, int status) {
+    public UserMovieAlert(Users user, long movieId) {
         this.user = user;
         this.movieId = movieId;
     }
