@@ -3,7 +3,6 @@ package com.rerelease.movie.rereleasemovie.scheduler;
 import com.rerelease.movie.rereleasemovie.dto.api.tmdb.TmdbMovieListResponseDto;
 import com.rerelease.movie.rereleasemovie.model.NotificationQueue;
 import com.rerelease.movie.rereleasemovie.repository.NotificationQueueRepository;
-import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
 import com.rerelease.movie.rereleasemovie.service.NotificationQueueService;
 import com.rerelease.movie.rereleasemovie.service.TmdbApiService;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 public class NotificationScheduler {
 
     private final TmdbApiService tmdbApiService;
-    private final UserMovieAlertRepository userMovieAlertRepository;
     private final NotificationQueueService notificationQueueService;
     private final NotificationQueueRepository notificationQueueRepository;
 
