@@ -86,7 +86,7 @@ public class NotificationQueueService {
             // 이메일 HTML 본문 구성
             String htmlContent = "<div style=\"font-family: Arial, sans-serif; line-height: 1.6;\">" +
                     "<h2>🎬 영화 (재)개봉 알림 🎉</h2>" +
-                    "<p><strong>“" + movieTitle + "”</strong>의 재개봉 소식을 전해드립니다!</p>" +
+                    "<p><strong>“" + movieTitle + "”</strong>의 (재)개봉 소식을 전해드립니다!</p>" +
                     "<img src=\"" + imageUrl + "\" alt=\"포스터 이미지\" " +
                     "style=\"max-width:300px; border-radius:8px; margin:20px 0;\" />" +
                     "<p>" +
