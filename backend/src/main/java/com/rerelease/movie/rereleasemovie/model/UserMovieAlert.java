@@ -21,6 +21,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "user_movie_alert")
 public class UserMovieAlert {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,12 +31,17 @@ public class UserMovieAlert {
     @ToString.Exclude
     private Users user;
 
+    @Column(name = "movie_id", nullable = false)
     private Long movieId;
+
+    @Column(name = "movie_title", nullable = false)
     private String movieTitle;
+
+    @Column(name = "poster_path", length = 500)
     private String posterPath;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder

@@ -10,7 +10,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -41,10 +40,8 @@ public class NotificationQueueService {
         // 전송 대기 상태(0)로 알림 큐에 추가
         NotificationQueue notificationQueue = NotificationQueue.builder()
                                                                .userMovieAlert(userMovieAlert)
-                                                               .scheduledTime(LocalDateTime.now()) // 즉시 전송 예정
                                                                .retryCount(0)
-                                                               .status(0)  // 0: 대기 상태
-                                                               .createdAt(LocalDateTime.now())
+                                                               .status(0) // 대기 상태
                                                                .build();
 
         notificationQueueRepository.save(notificationQueue);
@@ -63,10 +60,10 @@ public class NotificationQueueService {
 
         try {
             // 영화 제목을 인코딩하여 검색 URL 생성
-            String movieTitle = alert.getMovieTitle(); // 영화 제목 추출
-            String searchKeyword = "영화 " + movieTitle; // '영화' 키워드 추가
-            String encodedTitle = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8); // URL 인코딩
-            String naverSearchUrl = "https://search.naver.com/search.naver?query=" + encodedTitle; // 네이버 검색 URL 생성
+            String movieTitle = alert.getMovieTitle();
+            String searchKeyword = "영화 " + movieTitle;
+            String encodedTitle = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8);
+            String naverSearchUrl = "https://search.naver.com/search.naver?query=" + encodedTitle;
 
             // HTML 이메일 전송을 위한 MimeMessage 생성
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -100,20 +97,22 @@ public class NotificationQueueService {
             helper.setTo(alert.getUser()
                               .getEmail());
             helper.setSubject(subject);
-            helper.setText(htmlContent, true); // true → HTML 포맷 사용
+            helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);
 
             // 전송 성공 상태로 큐 상태 업데이트
-            queue.updateStatus(1, null, 0);
+            queue.updateStatus(1, 0);
 
             // 전송 성공 로그 저장
             notificationLogRepository.save(NotificationLog.builder()
                                                           .user(alert.getUser())
                                                           .movieId(alert.getMovieId())
+                                                          .movieTitle(alert.getMovieTitle())
+                                                          .posterPath(alert.getPosterPath())
                                                           .notificationType("EMAIL")
                                                           .status(1) // 성공
-                                                          .sentAt(LocalDateTime.now())
+                                                          .registeredAt(alert.getCreatedAt())
                                                           .build());
 
         } catch (Exception e) {
@@ -121,16 +120,21 @@ public class NotificationQueueService {
             int updatedRetryCount = queue.getRetryCount() + 1;
             int updatedStatus = (updatedRetryCount >= 3) ? 2 : 0;
 
-            queue.updateStatus(updatedStatus, e.getMessage(), updatedRetryCount);
+            queue.updateStatus(updatedStatus, updatedRetryCount);
+
+            String errorSummary = e.getClass()
+                                   .getSimpleName();
 
             // 실패 로그 저장
             notificationLogRepository.save(NotificationLog.builder()
                                                           .user(alert.getUser())
                                                           .movieId(alert.getMovieId())
+                                                          .movieTitle(alert.getMovieTitle())
+                                                          .posterPath(alert.getPosterPath())
                                                           .notificationType("EMAIL")
                                                           .status(2) // 실패
-                                                          .errorMessage(e.getMessage())
-                                                          .sentAt(LocalDateTime.now())
+                                                          .errorMessage(errorSummary)
+                                                          .registeredAt(alert.getCreatedAt())
                                                           .build());
         }
     }

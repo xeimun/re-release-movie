@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,26 +34,38 @@ public class NotificationLog {
     @Column(name = "movie_id", nullable = false)
     private Long movieId;
 
-    @Column(nullable = false)
+    @Column(name = "movie_title", nullable = false)
+    private String movieTitle;
+
+    @Column(name = "poster_path", length = 500)
+    private String posterPath;
+
+    @Column(name = "notification_type", nullable = false, length = 20)
     private String notificationType;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private int status;
 
-    @Column
+    @Column(name = "error_message")
     private String errorMessage;
 
-    @Column(nullable = false)
-    private LocalDateTime sentAt;
+    @Column(name = "registered_at", nullable = false, updatable = false)
+    private LocalDateTime registeredAt;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Builder
-    public NotificationLog(Users user, Long movieId, String notificationType, int status,
-                           String errorMessage, LocalDateTime sentAt) {
+    public NotificationLog(Users user, Long movieId, String movieTitle, String posterPath, String notificationType,
+                           int status, String errorMessage, LocalDateTime registeredAt) {
         this.user = user;
         this.movieId = movieId;
+        this.movieTitle = movieTitle;
+        this.posterPath = posterPath;
         this.notificationType = notificationType;
         this.status = status;
         this.errorMessage = errorMessage;
-        this.sentAt = sentAt;
+        this.registeredAt = registeredAt;
     }
 }

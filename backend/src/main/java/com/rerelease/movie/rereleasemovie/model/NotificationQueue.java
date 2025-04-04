@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,35 +31,25 @@ public class NotificationQueue {
     @ToString.Exclude
     private UserMovieAlert userMovieAlert;
 
-    @Column(nullable = false)
-    private LocalDateTime scheduledTime;
-
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private int status;
 
-    @Column(nullable = false)
+    @Column(name = "retry_count", nullable = false)
     private int retryCount;
 
-    @Column
-    private String errorMessage;
-
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public NotificationQueue(UserMovieAlert userMovieAlert, LocalDateTime scheduledTime, int status,
-                             int retryCount, String errorMessage, LocalDateTime createdAt) {
+    public NotificationQueue(UserMovieAlert userMovieAlert, int status, int retryCount) {
         this.userMovieAlert = userMovieAlert;
-        this.scheduledTime = scheduledTime;
         this.status = status;
         this.retryCount = retryCount;
-        this.errorMessage = errorMessage;
-        this.createdAt = createdAt;
     }
 
-    public void updateStatus(int newStatus, String errorMessage, int retryCount) {
+    public void updateStatus(int newStatus, int retryCount) {
         this.status = newStatus;
-        this.errorMessage = errorMessage;
         this.retryCount = retryCount;
     }
 }
