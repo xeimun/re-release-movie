@@ -31,14 +31,18 @@ public class UserMovieAlert {
     private Users user;
 
     private Long movieId;
+    private String movieTitle;
+    private String posterPath;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public UserMovieAlert(Users user, long movieId) {
+    public UserMovieAlert(Users user, long movieId, String movieTitle, String posterPath) {
         this.user = user;
         this.movieId = movieId;
+        this.movieTitle = movieTitle;
+        this.posterPath = posterPath;
     }
 }

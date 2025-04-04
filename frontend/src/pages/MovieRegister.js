@@ -16,9 +16,10 @@ const MovieRegister = () => {
 
         try {
             const response = await axios.post("/api/alerts/register", {
-                title: selectedMovie.title,
-                releaseYear: selectedMovie.release_date.split("-")[0],
                 tmdbId: selectedMovie.id,
+                title: selectedMovie.title,
+                posterPath: selectedMovie.poster_path,
+                releaseYear: selectedMovie.release_date.split("-")[0]
             });
 
             if (response.status === 200) {  // 성공적으로 등록된 경우

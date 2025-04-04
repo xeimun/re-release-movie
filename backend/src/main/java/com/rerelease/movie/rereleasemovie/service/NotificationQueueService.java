@@ -6,11 +6,14 @@ import com.rerelease.movie.rereleasemovie.model.UserMovieAlert;
 import com.rerelease.movie.rereleasemovie.repository.NotificationLogRepository;
 import com.rerelease.movie.rereleasemovie.repository.NotificationQueueRepository;
 import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,47 +59,76 @@ public class NotificationQueueService {
      */
     @Transactional
     public void sendNotification(NotificationQueue queue) {
+        UserMovieAlert alert = queue.getUserMovieAlert();
+
         try {
-            UserMovieAlert alert = queue.getUserMovieAlert();
+            // 영화 제목을 인코딩하여 검색 URL 생성
+            String movieTitle = alert.getMovieTitle(); // 영화 제목 추출
+            String searchKeyword = "영화 " + movieTitle; // '영화' 키워드 추가
+            String encodedTitle = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8); // URL 인코딩
+            String naverSearchUrl = "https://search.naver.com/search.naver?query=" + encodedTitle; // 네이버 검색 URL 생성
 
-            // 이메일 메시지 구성
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(alert.getUser()
-                               .getEmail());
-            message.setSubject("[재개봉 알림] - 영화 알림");
-            message.setText("등록하신 영화가 재개봉되었습니다. 영화 ID: " + alert.getMovieId());
+            // HTML 이메일 전송을 위한 MimeMessage 생성
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            // 이메일 발송
-            mailSender.send(message);
+            String subject = "(재)개봉 알림: " + movieTitle;
 
-            // [성공 처리]
-            queue.updateStatus(1, null, 0); // NotificationQueue 상태: 전송 성공 (에러 메시지 없음, 재시도 횟수 0)
+            /*
+             * 포스터 이미지 URL 구성 (TMDB 이미지 서버 사용)
+             * - 전체 이미지 URL = TMDB 기본 URL + 포스터의 상대 경로
+             * - 기본 URL: https://image.tmdb.org/t/p/w500
+             *   → w500은 너비 500px짜리 이미지 요청 의미
+             * - alert.getPosterPath(): /로 시작하는 상대 경로 (예: /abc123.jpg)
+             */
+            String imageUrl = "https://image.tmdb.org/t/p/w500" + alert.getPosterPath();
 
-            // 알림 로그 저장 (성공)
+            // 이메일 HTML 본문 구성
+            String htmlContent = "<div style=\"font-family: Arial, sans-serif; line-height: 1.6;\">" +
+                    "<h2>🎬 영화 (재)개봉 알림 🎉</h2>" +
+                    "<p><strong>“" + movieTitle + "”</strong>의 재개봉 소식을 전해드립니다!</p>" +
+                    "<img src=\"" + imageUrl + "\" alt=\"포스터 이미지\" " +
+                    "style=\"max-width:300px; border-radius:8px; margin:20px 0;\" />" +
+                    "<p>" +
+                    "<a href=\"" + naverSearchUrl + "\" target=\"_blank\" " +
+                    "style=\"color: #1e90ff; text-decoration: none; font-weight: bold;\">" +
+                    "네이버에서 \"" + movieTitle + "\" 검색하기 🔍" +
+                    "</a>" +
+                    "</p>" +
+                    "</div>";
+
+            helper.setTo(alert.getUser()
+                              .getEmail());
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true); // true → HTML 포맷 사용
+
+            mailSender.send(mimeMessage);
+
+            // 전송 성공 상태로 큐 상태 업데이트
+            queue.updateStatus(1, null, 0);
+
+            // 전송 성공 로그 저장
             notificationLogRepository.save(NotificationLog.builder()
                                                           .user(alert.getUser())
                                                           .movieId(alert.getMovieId())
                                                           .notificationType("EMAIL")
-                                                          .status(1)  // 성공
+                                                          .status(1) // 성공
                                                           .sentAt(LocalDateTime.now())
                                                           .build());
 
         } catch (Exception e) {
-            // [실패 처리]
+            // 전송 실패 시 재시도 횟수 증가 및 상태 업데이트
             int updatedRetryCount = queue.getRetryCount() + 1;
-            int updatedStatus = (updatedRetryCount >= 3) ? 2 : 0;  // 3회 이상 실패 시 상태 2(완전 실패), 그 외는 다시 대기
+            int updatedStatus = (updatedRetryCount >= 3) ? 2 : 0;
 
-            // 상태, 에러 메시지, 재시도 횟수 업데이트
             queue.updateStatus(updatedStatus, e.getMessage(), updatedRetryCount);
 
-            // 알림 로그 저장 (실패)
+            // 실패 로그 저장
             notificationLogRepository.save(NotificationLog.builder()
-                                                          .user(queue.getUserMovieAlert()
-                                                                     .getUser())
-                                                          .movieId(queue.getUserMovieAlert()
-                                                                        .getMovieId())
+                                                          .user(alert.getUser())
+                                                          .movieId(alert.getMovieId())
                                                           .notificationType("EMAIL")
-                                                          .status(2)  // 실패
+                                                          .status(2) // 실패
                                                           .errorMessage(e.getMessage())
                                                           .sentAt(LocalDateTime.now())
                                                           .build());
