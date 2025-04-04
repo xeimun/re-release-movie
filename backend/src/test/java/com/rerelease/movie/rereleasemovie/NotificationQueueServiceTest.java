@@ -18,7 +18,7 @@ import org.springframework.test.annotation.Rollback;
 
 @SpringBootTest
 @Transactional
-@Rollback(false)  // 테스트 실행 후 DB에 실제 반영되도록 롤백 비활성화
+@Rollback(false)  // 실제 DB에 반영하여 상태 확인
 public class NotificationQueueServiceTest {
 
     /*
@@ -39,48 +39,44 @@ public class NotificationQueueServiceTest {
     private NotificationQueueRepository notificationQueueRepository;
 
     @Test
-    public void testSendNotification() {
-        // 1. 테스트용 사용자 조회 또는 생성 (중복 생성 방지)
+    public void testSendRealEmailNotification() {
+        // 1. 테스트용 사용자 생성 또는 조회 (중복 생성 방지)
         Users user = userRepository.findByEmail("hinote444@naver.com")
                                    .orElseGet(() -> userRepository.save(
                                            Users.builder()
-                                                .email("hinote444@naver.com")
+                                                .email("hinote444@naver.com")  // 본인 메일 주소로 변경 가능
                                                 .nickname("지브리좋아")
                                                 .password("12345678")
                                                 .build()
                                    ));
 
-        // 2. 알림 대상 영화 등록 (UserMovieAlert 테이블에 삽입)
+        // 2. 알림 등록 (영화 정보 포함)
         UserMovieAlert alert = userMovieAlertRepository.save(
                 UserMovieAlert.builder()
                               .user(user)
-                              .movieId(12345L)  // TMDB 영화 ID 임의 번호 지정
+                              .movieId(8392L)
+                              .movieTitle("이웃집 토토로")
+                              .posterPath("/c9zCkL0rTkNQ1HB9cmeFIqbkS50.jpg")
                               .build()
         );
 
-        // 3. 알림 대기열에 등록 (NotificationQueue 테이블에 삽입)
+        // 3. 알림 대기열(큐)에 등록
         NotificationQueue queue = notificationQueueRepository.save(
                 NotificationQueue.builder()
                                  .userMovieAlert(alert)
-                                 .scheduledTime(LocalDateTime.now())   // 즉시 발송을 위해 현재 시간 설정
-                                 .retryCount(0)                        // 처음 시도이므로 재시도 0
-                                 .status(0)                            // 초기 상태: 대기 중
+                                 .scheduledTime(LocalDateTime.now())    // 즉시 발송을 위해 현재 시간 설정
+                                 .retryCount(0)                         // 처음 시도이므로 재시도 0
+                                 .status(0)                             // 초기 상태: 대기 중
                                  .createdAt(LocalDateTime.now())
                                  .build()
         );
 
-        // 4. queue를 다시 조회하여 영속 상태 보장 (JPA 변경 감지용)
-        NotificationQueue persistedQueue = notificationQueueRepository.findById(queue.getId())
-                                                                      .orElseThrow();
+        // 4. 알림 이메일 전송 실행 (실제 메일 전송)
+        notificationQueueService.sendNotification(queue);
 
-        // 5. 이메일 전송 실행 → 상태 업데이트 + 로그 기록
-        notificationQueueService.sendNotification(persistedQueue);
-
-        // 6. 다시 queue를 조회하여 상태가 '1 (전송 성공)' 으로 변경되었는지 확인
+        // 5. 상태 확인
         NotificationQueue updatedQueue = notificationQueueRepository.findById(queue.getId())
                                                                     .orElseThrow();
-
-        // 7. 테스트 검증 (status == 1)
         assertEquals(1, updatedQueue.getStatus());
     }
 }
