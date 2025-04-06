@@ -1,11 +1,11 @@
-import {createContext, useState, useEffect} from "react";
+import {createContext, useState, useEffect, useContext} from "react";
 import {useNavigate} from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const navigate = useNavigate(); // ✅ useEffect 내부에서 사용하도록 수정
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -15,13 +15,13 @@ export const AuthProvider = ({children}) => {
     const login = (token) => {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
-        navigate("/me"); // ✅ 로그인 후 이동
+        navigate("/me");
     };
 
     const logout = () => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
-        navigate("/login"); // ✅ 로그아웃 후 이동
+        navigate("/login");
     };
 
     return (
@@ -30,3 +30,5 @@ export const AuthProvider = ({children}) => {
         </AuthContext.Provider>
     );
 };
+
+export const useAuth = () => useContext(AuthContext);

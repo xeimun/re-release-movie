@@ -7,13 +7,20 @@ import axios from "./axiosInstance";
  */
 export const searchMovies = async (query) => {
     try {
-        // 백엔드 API에 검색 요청을 보냄
         const response = await axios.get("/api/tmdb/search", {params: {query}});
-
-        // TMDB API의 검색 결과 리스트 반환
         return response.data.results; // TMDB API의 `results` 배열 반환
     } catch (error) {
         console.error("영화 검색 오류", error);
         return []; // 오류 발생 시 빈 배열 반환
     }
+};
+
+export const getUserAlerts = async () => {
+    const response = await axios.get("/api/alerts/my-alerts");
+    return response.data;
+};
+
+export const deleteUserAlert = async (alertId) => {
+    const response = await axios.delete(`/api/alerts/${alertId}`);
+    return response.data;
 };

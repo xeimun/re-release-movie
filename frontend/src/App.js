@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import MovieRegister from "./pages/MovieRegister";
+import AlertManage from "./pages/AlertManage";
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/me" element={<Profile/>}/>
                 <Route path="/movie-register" element={<MovieRegister/>}/>
+                <Route path="/alerts/manage" element={<AlertManage/>}/>
             </Routes>
         </>
     );
