@@ -7,7 +7,7 @@ import com.rerelease.movie.rereleasemovie.repository.NotificationLogRepository;
 import com.rerelease.movie.rereleasemovie.repository.NotificationQueueRepository;
 import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
