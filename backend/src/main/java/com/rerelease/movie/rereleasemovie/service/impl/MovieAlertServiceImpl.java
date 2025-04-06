@@ -2,6 +2,7 @@ package com.rerelease.movie.rereleasemovie.service.impl;
 
 import com.rerelease.movie.rereleasemovie.dto.MovieAlertRequest;
 import com.rerelease.movie.rereleasemovie.dto.MovieAlertResponse;
+import com.rerelease.movie.rereleasemovie.dto.UserAlertManageDto;
 import com.rerelease.movie.rereleasemovie.exceptions.MovieAlreadyRegisteredException;
 import com.rerelease.movie.rereleasemovie.exceptions.UserNotFoundException;
 import com.rerelease.movie.rereleasemovie.model.UserMovieAlert;
@@ -10,11 +11,12 @@ import com.rerelease.movie.rereleasemovie.repository.UserMovieAlertRepository;
 import com.rerelease.movie.rereleasemovie.repository.UserRepository;
 import com.rerelease.movie.rereleasemovie.service.MovieAlertService;
 import com.rerelease.movie.rereleasemovie.service.NotificationQueueService;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +64,49 @@ public class MovieAlertServiceImpl implements MovieAlertService {
                                  .movieId(request.getTmdbId())
                                  .userMovieAlertId(savedAlert.getId())
                                  .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserAlertManageDto> getUserMovieAlerts(String userEmail) {
+        // 1. 사용자 조회
+        Users user = userRepository.findByEmail(userEmail)
+                                   .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 2. 해당 사용자의 알림 목록 조회
+        List<UserMovieAlert> alerts = userMovieAlertRepository.findAllByUserOrderByCreatedAtDesc(user);
+
+        // 3. DTO로 변환
+        return alerts.stream()
+                     .map(alert -> UserAlertManageDto.builder()
+                                                     .userMovieAlertId(alert.getId())
+                                                     .movieId(alert.getMovieId())
+                                                     .movieTitle(alert.getMovieTitle())
+                                                     .posterPath(alert.getPosterPath())
+                                                     .registeredAt(alert.getCreatedAt())
+                                                     .build())
+                     .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserMovieAlert(String userEmail, Long alertId) {
+        // 1. 사용자 조회
+        Users user = userRepository.findByEmail(userEmail)
+                                   .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 2. 알림 조회 (해당 사용자의 것인지 확인)
+        UserMovieAlert alert = userMovieAlertRepository.findById(alertId)
+                                                       .orElseThrow(
+                                                               () -> new IllegalArgumentException("해당 알림을 찾을 수 없습니다."));
+
+        if (!alert.getUser()
+                  .getId()
+                  .equals(user.getId())) {
+            throw new AccessDeniedException("본인의 알림만 삭제할 수 있습니다.");
+        }
+
+        // 3. 삭제 (user_movie_alert 삭제 시 notification_queue도 함께 제거됨 - cascade 설정)
+        userMovieAlertRepository.delete(alert);
     }
 }
