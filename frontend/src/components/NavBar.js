@@ -1,51 +1,53 @@
-import {useContext, useState} from "react";
+// 📄 src/components/NavBar.js
+import {useContext} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import {AuthContext} from "../context/AuthContext";
-import {Link} from "react-router-dom";
 
 const NavBar = () => {
     const {isAuthenticated, logout} = useContext(AuthContext);
-    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const goHome = () => {
+        navigate("/", {replace: true});
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+
+    const renderMenu = () => {
+        if (!isAuthenticated) {
+            return (
+                <>
+                    <Link to="/login" className="hover:text-blue-500">로그인</Link>
+                    <Link to="/signup" className="hover:text-blue-500">회원가입</Link>
+                </>
+            );
+        }
+        return (
+            <>
+                <Link to="/me" className="hover:text-blue-500">내 정보</Link>
+                <Link to="/alerts/manage" className="hover:text-blue-500">알림 관리</Link>
+                <button onClick={handleLogout} className="hover:text-blue-500">로그아웃</button>
+            </>
+        );
+    };
 
     return (
-        <nav className="bg-gray-800 text-white p-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="text-2xl font-bold hover:text-gray-300">
-                    🎬 ReRelease Movie
-                </Link>
-
-                {/* 모바일 메뉴 버튼 */}
+        <nav className="bg-white text-gray-800 py-3 shadow-sm">
+            <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center">
+                {/* 좌측 로고 */}
                 <button
-                    className="md:hidden text-white focus:outline-none"
-                    onClick={() => setMenuOpen(!menuOpen)}
+                    onClick={goHome}
+                    className="text-lg font-bold mb-2 sm:mb-0 hover:text-black"
                 >
-                    ☰
+                    ReScreen
                 </button>
-
-                {/* 데스크톱 & 모바일 메뉴 */}
-                <ul className={`md:flex space-x-4 ${menuOpen ? "block" : "hidden"} md:block`}>
-                    {!isAuthenticated ? (
-                        <>
-                            <li><Link to="/signup" className="hover:text-gray-300 block md:inline">회원가입</Link></li>
-                            <li><Link to="/login" className="hover:text-gray-300 block md:inline">로그인</Link></li>
-                        </>
-                    ) : (
-                        <>
-                            <li><Link to="/me" className="hover:text-gray-300 block md:inline">내 정보</Link></li>
-                            <li><Link to="/movie-register" className="hover:text-gray-300 block md:inline">🎥 영화
-                                등록</Link></li>
-                            <li><Link to="/alerts/manage" className="hover:text-gray-300 block md:inline">🎫 알림 관리</Link>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={logout}
-                                    className="hover:text-gray-300 block md:inline"
-                                >
-                                    로그아웃
-                                </button>
-                            </li>
-                        </>
-                    )}
-                </ul>
+                {/* 우측 메뉴 */}
+                <div className="flex space-x-4 text-sm font-semibold">
+                    {renderMenu()}
+                </div>
             </div>
         </nav>
     );

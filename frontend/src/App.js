@@ -5,13 +5,14 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import MovieRegister from "./pages/MovieRegister";
 import AlertManage from "./pages/AlertManage";
+import Main from "./pages/Main";
 
 const App = () => {
     return (
         <>
             <NavBar/>
             <Routes>
-                <Route path="/" element={<h1>메인 페이지</h1>}/>
+                <Route path="/" element={<Main/>}/>
                 <Route path="/signup" element={<Signup/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/me" element={<Profile/>}/>
