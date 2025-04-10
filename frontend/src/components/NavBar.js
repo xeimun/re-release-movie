@@ -1,4 +1,3 @@
-// 📄 src/components/NavBar.js
 import {useContext} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {AuthContext} from "../context/AuthContext";
@@ -17,19 +16,35 @@ const NavBar = () => {
     };
 
     const renderMenu = () => {
-        if (!isAuthenticated) {
-            return (
-                <>
-                    <Link to="/login" className="hover:text-blue-500">로그인</Link>
-                    <Link to="/signup" className="hover:text-blue-500">회원가입</Link>
-                </>
-            );
-        }
         return (
             <>
-                <Link to="/me" className="hover:text-blue-500">내 정보</Link>
-                <Link to="/alerts/manage" className="hover:text-blue-500">알림 관리</Link>
-                <button onClick={handleLogout} className="hover:text-blue-500">로그아웃</button>
+                {/* 항상 표시되는 개봉 예정 메뉴 */}
+                <Link to="/upcoming" className="hover:text-blue-500">
+                    개봉 예정
+                </Link>
+
+                {!isAuthenticated ? (
+                    <>
+                        <Link to="/login" className="hover:text-blue-500">
+                            로그인
+                        </Link>
+                        <Link to="/signup" className="hover:text-blue-500">
+                            회원가입
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/me" className="hover:text-blue-500">
+                            내 정보
+                        </Link>
+                        <Link to="/alerts/manage" className="hover:text-blue-500">
+                            알림 관리
+                        </Link>
+                        <button onClick={handleLogout} className="hover:text-blue-500">
+                            로그아웃
+                        </button>
+                    </>
+                )}
             </>
         );
     };
@@ -44,6 +59,7 @@ const NavBar = () => {
                 >
                     ReScreen
                 </button>
+
                 {/* 우측 메뉴 */}
                 <div className="flex space-x-4 text-sm font-semibold">
                     {renderMenu()}
