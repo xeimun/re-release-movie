@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useLocation} from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import MovieCard from "../components/MovieCard";
+import LoadingMessage from "../components/LoadingMessage";
 import {searchMovies} from "../api/movieApi";
 
 const Main = () => {
@@ -9,14 +10,17 @@ const Main = () => {
     const [movies, setMovies] = useState([]);
     const [hasSearched, setHasSearched] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
+    const [loading, setLoading] = useState(false);
     const location = useLocation();
     const cardAreaRef = useRef(null);
 
+    // 검색 실행
     const handleSearch = async () => {
         if (!query.trim()) return;
 
         setHasSearched(true);
         setSelectedMovie(null);
+        setLoading(true);
 
         try {
             const results = await searchMovies(query);
@@ -24,17 +28,19 @@ const Main = () => {
         } catch (e) {
             console.error("영화 검색 실패:", e);
             setMovies([]);
+        } finally {
+            setLoading(false);
         }
     };
 
-    // 홈 경로로 이동했을 때만 초기화
+    // 홈 이동 시 상태 초기화
     useEffect(() => {
-        const isOnHome = location.pathname === "/";
-        if (isOnHome) {
+        if (location.pathname === "/") {
             setQuery("");
             setMovies([]);
             setHasSearched(false);
             setSelectedMovie(null);
+            setLoading(false);
         }
     }, [location.pathname]);
 
@@ -63,12 +69,17 @@ const Main = () => {
                     ref={cardAreaRef}
                     className="mt-10 w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-2"
                 >
-                    {hasSearched && movies.length === 0 && (
+                    {/* 검색 후 로딩 중일 때 */}
+                    {hasSearched && loading && <LoadingMessage message="검색 중입니다..."/>}
+
+                    {/* 검색 결과 없음 */}
+                    {hasSearched && !loading && movies.length === 0 && (
                         <p className="text-gray-500 text-sm col-span-full">
                             검색 결과가 없습니다.
                         </p>
                     )}
 
+                    {/* 검색 결과 표시 */}
                     {movies.map((movie) => (
                         <MovieCard
                             key={movie.id}
