@@ -34,7 +34,7 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
                 tmdbId: movie.id,
                 title: movie.title,
                 posterPath: movie.poster_path,
-                releaseYear: movie.release_date.split("-")[0]
+                releaseYear: movie.release_date.split("-")[0],
             });
 
             if (response.status === 200) {
@@ -64,26 +64,29 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
 
     return (
         <div
-            className={`relative rounded-lg overflow-hidden shadow hover:shadow-lg transform transition cursor-pointer ${
-                isSelected ? "brightness-75" : ""
-            }`}
+            className="relative rounded-lg overflow-hidden shadow hover:shadow-lg transform transition cursor-pointer"
             onClick={handleCardClick}
         >
-            {/* 포스터 이미지 or 대체 이미지 */}
+            {/* 포스터 이미지 또는 대체 이미지 */}
             {movie.poster_path ? (
                 <img
                     src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                     alt={movie.title}
-                    className="w-full h-72 object-cover"
+                    className={`w-full h-72 object-cover transition ${
+                        isSelected ? "brightness-75" : ""
+                    }`}
                 />
             ) : (
                 <div
-                    className="w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide">
+                    className={`w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${
+                        isSelected ? "brightness-75" : ""
+                    }`}
+                >
                     NO IMAGE
                 </div>
             )}
 
-            {/* 텍스트 정보 */}
+            {/* 영화 정보 텍스트 */}
             <div className="p-3 text-left bg-white">
                 <h3 className="font-semibold text-base truncate" title={movie.title}>
                     {movie.title}

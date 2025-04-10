@@ -14,9 +14,7 @@ const AlertCard = ({alert, isSelected, onSelect, onDelete}) => {
 
     return (
         <div
-            className={`relative rounded-lg overflow-hidden shadow hover:shadow-lg transform transition cursor-pointer ${
-                isSelected ? "brightness-75" : ""
-            }`}
+            className="relative rounded-lg overflow-hidden shadow hover:shadow-lg transform transition cursor-pointer"
             onClick={handleCardClick}
         >
             {/* 포스터 이미지 */}
@@ -24,11 +22,16 @@ const AlertCard = ({alert, isSelected, onSelect, onDelete}) => {
                 <img
                     src={`https://image.tmdb.org/t/p/w500${alert.posterPath}`}
                     alt={alert.movieTitle}
-                    className="w-full h-72 object-cover"
+                    className={`w-full h-72 object-cover transition ${
+                        isSelected ? "brightness-75" : ""
+                    }`}
                 />
             ) : (
                 <div
-                    className="w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide">
+                    className={`w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${
+                        isSelected ? "brightness-75" : ""
+                    }`}
+                >
                     NO IMAGE
                 </div>
             )}
