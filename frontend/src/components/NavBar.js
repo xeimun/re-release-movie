@@ -34,11 +34,11 @@ const NavBar = () => {
                     </>
                 ) : (
                     <>
-                        <Link to="/me" className="hover:text-blue-500">
-                            내 정보
-                        </Link>
                         <Link to="/alerts/manage" className="hover:text-blue-500">
                             알림 관리
+                        </Link>
+                        <Link to="/me" className="hover:text-blue-500">
+                            내 정보
                         </Link>
                         <button onClick={handleLogout} className="hover:text-blue-500">
                             로그아웃
