@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import axios from "../api/axiosInstance";
 import UpcomingCard from "../components/UpcomingCard";
 import MovieModal from "../components/MovieModal";
+import LoadingMessage from "../components/LoadingMessage";
 
 const UpcomingPage = () => {
     const [movies, setMovies] = useState([]);
@@ -96,7 +97,7 @@ const UpcomingPage = () => {
             </div>
 
             {loading && (
-                <div className="mt-6 text-sm text-gray-500">로딩 중...</div>
+                <LoadingMessage message="로딩 중입니다..."/>
             )}
 
             <MovieModal
