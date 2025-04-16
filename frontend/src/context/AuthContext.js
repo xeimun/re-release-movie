@@ -9,7 +9,24 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        setIsAuthenticated(!!token);
+
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const now = Math.floor(Date.now() / 1000);
+
+                if (payload.exp && payload.exp < now) {
+                    logout(); // 토큰이 만료됨
+                } else {
+                    setIsAuthenticated(true); // 유효한 토큰
+                }
+            } catch (e) {
+                console.error("토큰 파싱 실패:", e);
+                logout(); // 잘못된 토큰 → 로그아웃 처리
+            }
+        } else {
+            setIsAuthenticated(false); // 토큰 없음
+        }
     }, []);
 
     const login = (token) => {
