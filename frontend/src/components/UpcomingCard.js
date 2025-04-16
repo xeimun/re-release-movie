@@ -15,21 +15,24 @@ const UpcomingCard = forwardRef(({movie, onClick}, ref) => {
         <div
             ref={ref}
             onClick={onClick}
-            className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg cursor-pointer transition"
+            className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg cursor-pointer transition"
         >
             {/* 포스터 이미지 */}
-            {posterPath ? (
-                <img
-                    src={`https://image.tmdb.org/t/p/w500${posterPath}`}
-                    alt={`${title} 포스터`}
-                    className="w-full h-72 object-cover"
-                />
-            ) : (
-                <div
-                    className="w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg">
-                    NO IMAGE
-                </div>
-            )}
+            <div className="relative aspect-[1/1.4] bg-black">
+                {posterPath ? (
+                    <img
+                        src={`https://image.tmdb.org/t/p/w500${posterPath}`}
+                        alt={`${title} 포스터`}
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <div
+                        className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg"
+                    >
+                        NO IMAGE
+                    </div>
+                )}
+            </div>
 
             {/* 텍스트 정보 */}
             <div className="p-3 text-left">

@@ -12,12 +12,7 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
 
     const handleCardClick = (e) => {
         if (e.target.closest("button")) return;
-
-        if (isSelected) {
-            onSelect(null);
-        } else {
-            onSelect(movie);
-        }
+        onSelect(isSelected ? null : movie);
     };
 
     const handleRegister = async (e) => {
@@ -64,29 +59,58 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
 
     return (
         <div
-            className="relative rounded-lg overflow-hidden shadow hover:shadow-lg transform transition cursor-pointer"
+            className="rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
             onClick={handleCardClick}
         >
-            {/* 포스터 이미지 또는 대체 이미지 */}
-            {movie.poster_path ? (
-                <img
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    className={`w-full h-72 object-cover transition ${
-                        isSelected ? "brightness-75" : ""
-                    }`}
-                />
-            ) : (
-                <div
-                    className={`w-full h-72 flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${
-                        isSelected ? "brightness-75" : ""
-                    }`}
-                >
-                    NO IMAGE
-                </div>
-            )}
+            {/* 포스터 영역 (일반적인 영화 포스터 비율 2:3) */}
+            <div className="relative aspect-[1/1.4] bg-black">
+                {movie.poster_path ? (
+                    <img
+                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        alt={movie.title}
+                        className={`w-full h-full object-cover transition ${
+                            isSelected ? "brightness-75" : ""
+                        }`}
+                    />
+                ) : (
+                    <div
+                        className={`w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${
+                            isSelected ? "brightness-75" : ""
+                        }`}
+                    >
+                        NO IMAGE
+                    </div>
+                )}
 
-            {/* 영화 정보 텍스트 */}
+                {/* 알림 등록 버튼 및 메시지 (오버레이) */}
+                {isSelected && (
+                    <div
+                        className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 px-2">
+                        <button
+                            onClick={handleRegister}
+                            className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-semibold rounded-full shadow-md transition"
+                        >
+                            🔔 알림 등록
+                        </button>
+
+                        {successMessage && (
+                            <div
+                                className="mt-3 px-4 py-2 rounded text-sm font-semibold shadow-md bg-green-100 text-green-800">
+                                {successMessage}
+                            </div>
+                        )}
+
+                        {errorMessage && (
+                            <div
+                                className="mt-3 px-4 py-2 rounded text-sm font-semibold shadow-md bg-red-100 text-red-800">
+                                {errorMessage}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* 텍스트 영역 */}
             <div className="p-3 text-left bg-white">
                 <h3 className="font-semibold text-base truncate" title={movie.title}>
                     {movie.title}
@@ -95,31 +119,6 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
                     개봉일: {movie.release_date?.split("-")[0]}
                 </p>
             </div>
-
-            {/* 알림 등록 버튼 및 메시지 */}
-            {isSelected && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-40 px-2">
-                    <button
-                        onClick={handleRegister}
-                        className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-semibold rounded-full shadow-md transition"
-                    >
-                        🔔 알림 등록
-                    </button>
-
-                    {successMessage && (
-                        <div
-                            className="mt-3 px-4 py-2 rounded text-sm font-semibold shadow-md bg-green-100 text-green-800">
-                            {successMessage}
-                        </div>
-                    )}
-
-                    {errorMessage && (
-                        <div className="mt-3 px-4 py-2 rounded text-sm font-semibold shadow-md bg-red-100 text-red-800">
-                            {errorMessage}
-                        </div>
-                    )}
-                </div>
-            )}
         </div>
     );
 };
