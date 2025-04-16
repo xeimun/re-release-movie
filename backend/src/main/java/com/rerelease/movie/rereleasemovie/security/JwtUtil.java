@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private final Key key;
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간 (밀리초 단위)
+    private static final long EXPIRATION_TIME = 1000 * 60 * 15; // 15분 (밀리초 단위)
 
     public JwtUtil(@Value("${secret.key}") String secretKey) {
         if (secretKey == null || secretKey.length() < 32) {
