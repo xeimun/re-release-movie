@@ -60,8 +60,9 @@ public class MovieAlertServiceImpl implements MovieAlertService {
         // 7. 성공 메시지를 담은 응답 객체 생성 및 반환
         return MovieAlertResponse.builder()
                                  .message("영화 등록이 완료되었습니다.")
-                                 .movieTitle(request.getTitle())
                                  .movieId(request.getTmdbId())
+                                 .movieTitle(request.getTitle())
+                                 .posterPath(request.getPosterPath())
                                  .userMovieAlertId(savedAlert.getId())
                                  .build();
     }
