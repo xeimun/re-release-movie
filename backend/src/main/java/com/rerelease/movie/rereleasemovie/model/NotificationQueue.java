@@ -31,9 +31,6 @@ public class NotificationQueue {
     @ToString.Exclude
     private UserMovieAlert userMovieAlert;
 
-    @Column(name = "status", nullable = false)
-    private int status;
-
     @Column(name = "retry_count", nullable = false)
     private int retryCount;
 
@@ -42,14 +39,12 @@ public class NotificationQueue {
     private LocalDateTime createdAt;
 
     @Builder
-    public NotificationQueue(UserMovieAlert userMovieAlert, int status, int retryCount) {
+    public NotificationQueue(UserMovieAlert userMovieAlert, int retryCount) {
         this.userMovieAlert = userMovieAlert;
-        this.status = status;
         this.retryCount = retryCount;
     }
 
-    public void updateStatus(int newStatus, int retryCount) {
-        this.status = newStatus;
+    public void updateRetryCount(int retryCount) {
         this.retryCount = retryCount;
     }
 }

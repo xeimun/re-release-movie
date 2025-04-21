@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationQueueRepository extends JpaRepository<NotificationQueue, Long> {
 
-    // 상태(status)가 0이고, 재시도 횟수가 3회 미만인 알림을 조회
-    List<NotificationQueue> findByStatusAndRetryCountLessThan(int status, int retryCount);
+    // 재시도 횟수가 3회 미만인 알림을 조회
+    List<NotificationQueue> findByRetryCountLessThan(int retryCount);
 }

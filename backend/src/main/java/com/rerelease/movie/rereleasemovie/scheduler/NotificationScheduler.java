@@ -42,8 +42,8 @@ public class NotificationScheduler {
             }
         }
 
-        // 알림 큐에서 전송 대기 상태(0) 및 재시도 횟수 3 미만인 데이터 조회
-        List<NotificationQueue> queues = notificationQueueRepository.findByStatusAndRetryCountLessThan(0, 3);
+        // 알림 큐에서 재시도 횟수 3 미만인 데이터 조회
+        List<NotificationQueue> queues = notificationQueueRepository.findByRetryCountLessThan(3);
 
         // 알림 전송 실행
         for (NotificationQueue queue : queues) {
