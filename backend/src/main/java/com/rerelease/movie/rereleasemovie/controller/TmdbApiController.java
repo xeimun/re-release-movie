@@ -30,7 +30,10 @@ public class TmdbApiController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<TmdbMovieSearchResponseDto> searchMovies(@RequestParam String query) {
-        return ResponseEntity.ok(tmdbApiService.searchMovies(query));
+    public ResponseEntity<TmdbMovieSearchResponseDto> searchMovies(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page
+    ) {
+        return ResponseEntity.ok(tmdbApiService.searchMovies(query, page));
     }
 }

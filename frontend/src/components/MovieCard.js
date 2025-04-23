@@ -1,9 +1,9 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, forwardRef} from "react";
 import {AuthContext} from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
 import axios from "../api/axiosInstance";
 
-const MovieCard = ({movie, isSelected, onSelect}) => {
+const MovieCard = forwardRef(({movie, isSelected, onSelect}, ref) => {
     const {isAuthenticated} = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
                 setTimeout(() => setSuccessMessage(""), 3000);
             }
         } catch (error) {
-            setSuccessMessage(""); // 성공 메시지 초기화
+            setSuccessMessage("");
             if (error.response) {
                 switch (error.response.status) {
                     case 409:
@@ -59,30 +59,24 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
 
     return (
         <div
+            ref={ref}
             className="rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
             onClick={handleCardClick}
         >
-            {/* 포스터 영역 (일반적인 영화 포스터 비율 2:3) */}
             <div className="relative aspect-[1/1.4] bg-black">
                 {movie.poster_path ? (
                     <img
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         alt={movie.title}
-                        className={`w-full h-full object-cover transition ${
-                            isSelected ? "brightness-75" : ""
-                        }`}
+                        className={`w-full h-full object-cover transition ${isSelected ? "brightness-75" : ""}`}
                     />
                 ) : (
                     <div
-                        className={`w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${
-                            isSelected ? "brightness-75" : ""
-                        }`}
-                    >
+                        className={`w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg tracking-wide transition ${isSelected ? "brightness-75" : ""}`}>
                         NO IMAGE
                     </div>
                 )}
 
-                {/* 알림 등록 버튼 및 메시지 (오버레이) */}
                 {isSelected && (
                     <div
                         className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 px-2">
@@ -110,7 +104,6 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
                 )}
             </div>
 
-            {/* 텍스트 영역 */}
             <div className="p-3 text-left bg-white">
                 <h3 className="font-semibold text-base truncate" title={movie.title}>
                     {movie.title}
@@ -121,6 +114,7 @@ const MovieCard = ({movie, isSelected, onSelect}) => {
             </div>
         </div>
     );
-};
+});
 
+MovieCard.displayName = "MovieCard";
 export default MovieCard;

@@ -75,13 +75,17 @@ public class TmdbApiService {
     }
 
     /**
-     * TMDB API에서 특정 영화 제목으로 검색
+     * TMDB API에서 특정 영화 제목으로 검색합니다.
      *
-     * @param query 검색할 영화 제목
-     * @return TMDB 검색 결과 (TmdbMovieSearchResponseDto)
+     * @param query 검색할 영화 제목 (예: "인셉션")
+     * @param page  검색 결과의 페이지 번호 (1부터 시작)
+     * @return TMDB 검색 결과를 담은 DTO (TmdbMovieSearchResponseDto)
      */
-    public TmdbMovieSearchResponseDto searchMovies(String query) {
-        String url = "/search/movie?api_key=" + tmdbApiKey + "&language=ko-KR&query=" + query;
+    public TmdbMovieSearchResponseDto searchMovies(String query, int page) {
+        String url = "/search/movie?api_key=" + tmdbApiKey
+                + "&language=ko-KR"
+                + "&query=" + query
+                + "&page=" + page;
 
         return tmdbWebClient.get()
                             .uri(url)
@@ -89,4 +93,5 @@ public class TmdbApiService {
                             .bodyToMono(TmdbMovieSearchResponseDto.class)
                             .block();
     }
+
 }
