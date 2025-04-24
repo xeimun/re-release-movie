@@ -36,10 +36,13 @@ const Main = () => {
     // 검색 실행
     const handleSearch = () => {
         if (!query.trim()) return;
-        setHasSearched(true);
+
         setPage(1);
         setMovies([]);
+        setHasSearched(true);
         setSelectedMovie(null);
+
+        fetchMovies(query, 1);
     };
 
     // TMDB에서 영화 검색 결과 가져오기
@@ -77,11 +80,11 @@ const Main = () => {
 
     // 2. 버튼 기반 검색 모드 (검색 버튼(또는 Enter)을 눌렀을 때만 요청)
     useEffect(() => {
-        if (hasSearched && query) {
+        if (hasSearched && page > 1 && query) {
             fetchMovies(query, page);
         }
-    }, [hasSearched, page]);
-    
+    }, [hasSearched, page, query]);
+
     // 메인 이동 시 상태 초기화
     useEffect(() => {
         if (location.pathname === "/") {
